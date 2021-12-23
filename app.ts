@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors'
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 interface information{
     title:string;
@@ -37,9 +38,16 @@ let informations:information[]=[
     }
 ]
 
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(cors())
 
-app.get('/',(req,res)=>{
-    res.status(200).json(informations)
+app.get('/:search',(req,res)=>{
+    let filteredArray:Object[]=[]
+    filteredArray=informations.filter((item:any)=>(req.params.search==""||item.title.toLowerCase().includes(req.params.search.toLowerCase())))
+  
+    
+    res.status(200).json(filteredArray)
 })
 app.listen(port, () => {
   console.log(`Timezones by location application is running on port ${port}.`);
